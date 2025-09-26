@@ -4,12 +4,8 @@ name: "base"
 # Using the defaults channel from Anaconda can easily result in getting your
 # laptop, CI pipeline, etc. blacklisted by Anaconda which makes building packages
 # impossible. To get permission to use Anaconda again you need to either pay or prove that
-# you meet the requirements for a free license. Using the conda-forge channel avoids 
+# you meet the requirements for a free license. Using the conda-forge channel avoids
 # these restrictions completely.
 channels:
   - conda-forge
-# Update the list of packages here
-# dependencies:
-# - add packages here
-# - one per line
 prefix: "/opt/conda"
