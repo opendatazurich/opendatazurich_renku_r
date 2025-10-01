@@ -7,12 +7,15 @@ FROM renku/renkulab-r:4.3.1-0.25.0
 # e.g. the following installs apt-utils and vim; each pkg on its own line, all lines
 # except for the last end with backslash '\' to continue the RUN line
 #
-# USER root
-# RUN apt-get update && \
-#    apt-get install -y --no-install-recommends \
-#    apt-utils \
-#    vim
-# USER ${NB_USER}
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libudunits2-dev \
+    libproj-dev \
+    libgdal-dev \
+    libgeos-dev
+RUN chown -R ${NB_USER} /home/${NB_USER}
+USER ${NB_USER}
 
 # install the python dependencies
 COPY requirements.txt environment.yml /tmp/
@@ -21,4 +24,8 @@ RUN mamba env update -q -f /tmp/environment.yml && \
     mamba clean -y --all && \
     mamba env export -n "root" && \
     rm -rf ${HOME}/.renku/venv
-COPY src/opendata.py src/get_dataset_type.py /bin/opendata/
+RUN R -e "install.packages(c('sf', 'skimr'), repos='https://cloud.r-project.org')"
+
+COPY startup.sh post-init.sh /usr/local/bin/
+COPY opendata /usr/local/bin/opendata
+COPY templates /usr/local/bin/templates

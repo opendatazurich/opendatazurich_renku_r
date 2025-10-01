@@ -1,13 +1,12 @@
 #!/bin/sh
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 
-pushd . > /dev/null
-cd $SCRIPT_DIR
+OLD_DIR=$(pwd)
+# cd $SCRIPT_DIR
 
 if [ -z "${PACKAGE_ID}" ]; then
     echo "PACKAGE_ID is not set. Using the default dataset."
-    # papermill templates/TemplateCsv.ipynb OpenData.ipynb
-    exit 0
+    PACKAGE_ID="bau_hae_lima_zuordnung_adr_quartier_bzo16_bzo99_od5143"
 fi
 
 if [ -z "${RESOURCE_ID}" ]; then
@@ -15,16 +14,6 @@ if [ -z "${RESOURCE_ID}" ]; then
     RESOURCE_ID="NONE"
 fi
 
-dataset_type=$(python src/get_dataset_type.py "${PACKAGE_ID}")
-if [ "${dataset_type}" = "csv" ]; then
-    echo "Using CSV dataset."
-    # papermill templates/TemplateCsv.ipynb OpenData.ipynb -p package_id "${PACKAGE_ID}" -p resource_id "${RESOURCE_ID}"
-elif [ "${dataset_type}" = "geo" ]; then
-    echo "Using Geo dataset."
-    # papermill templates/TemplateGeo.ipynb OpenData.ipynb -p package_id "${PACKAGE_ID}" -p resource_id "${RESOURCE_ID}"
-else
-    echo "Unknown dataset type: ${dataset_type}. Defaulting to CSV."
-    # papermill templates/TemplateCsv.ipynb OpenData.ipynb -p package_id "${PACKAGE_ID}"  -p resource_id "${RESOURCE_ID}"
-fi
+python $SCRIPT_DIR/opendata/generate_starter_rmd.py "${PACKAGE_ID}"
 
-popd > /dev/null
+# cd "$OLD_DIR"
