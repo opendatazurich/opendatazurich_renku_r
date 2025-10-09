@@ -25,6 +25,7 @@ BASELINK_DATAPORTAL = "https://data.stadt-zuerich.ch/dataset/"
 TEMPLATE_FOLDER = os.path.join(os.path.dirname(MODULE_DIR), "templates")
 TEMPLATE_RMARKDOWN = "template_rmarkdown.Rmd"
 TEMPLATE_RMARKDOWN_GEO = "template_rmarkdown_geo.Rmd"
+TEMPLATE_README = "template_readme.md"
 
 TODAY_DATE = datetime.today().strftime("%Y-%m-%d")
 TODAY_DATETIME = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
@@ -179,6 +180,7 @@ def create_rmarkdown(data, notebook_template):
     print(
         "Creating", data.shape[0], "R Markdown files with template:", notebook_template
     )
+    filenames = []
     for idx in data.index:
         with open(
             os.path.join(TEMPLATE_FOLDER, notebook_template), "r", encoding="utf-8"
@@ -215,13 +217,32 @@ def create_rmarkdown(data, notebook_template):
         file_url = data.loc[idx, PREFIX_RESOURCE_COLS + "url"]
         rmd = rmd.replace("{{ FILE_URL }}", file_url)
 
+        filename = (
+            f"{data.loc[idx, 'name']}_{data.loc[idx, PREFIX_RESOURCE_COLS + 'id']}.Rmd"
+        )
+
         # Save to disk.
-        with open(
-            f"{data.loc[idx, 'name']}_{data.loc[idx, PREFIX_RESOURCE_COLS + 'id']}.Rmd",
-            "w",
-            encoding="utf-8",
-        ) as file:
+        with open(filename, "w", encoding="utf-8") as file:
             file.write("".join(rmd))
+        filenames.append(filename)
+    return filenames
+
+
+def create_readme(table_data_filenames, geo_data_filenames):
+    """Create a README describing the starter code files"""
+    print("Creating README file with template:", TEMPLATE_README)
+    with open(
+        os.path.join(TEMPLATE_FOLDER, TEMPLATE_README), "r", encoding="utf-8"
+    ) as file:
+        rmd = file.read()
+
+    all_filenames = table_data_filenames + geo_data_filenames
+    list_files = "\n".join([f"- {fn}" for fn in all_filenames])
+    rmd = rmd.replace("{{ FILE_LIST }}", list_files)
+
+    # Save to disk.
+    with open("README.md", "w", encoding="utf-8") as file:
+        file.write("".join(rmd))
 
 
 # %%
@@ -234,8 +255,13 @@ def main(dataset_id):
     df = clean_features(df)
     df = prepare_data_for_codebooks(df)
     df = filter_resources(df)
-    create_rmarkdown(df[df["format_filter"] == "table_data"], TEMPLATE_RMARKDOWN)
-    create_rmarkdown(df[df["format_filter"] == "geo_data"], TEMPLATE_RMARKDOWN_GEO)
+    table_data_filenames = create_rmarkdown(
+        df[df["format_filter"] == "table_data"], TEMPLATE_RMARKDOWN
+    )
+    geo_data_filenames = create_rmarkdown(
+        df[df["format_filter"] == "geo_data"], TEMPLATE_RMARKDOWN_GEO
+    )
+    create_readme(table_data_filenames, geo_data_filenames)
 
 
 # %%
