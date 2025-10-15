@@ -24,7 +24,7 @@ RUN mamba env update -q -f /tmp/environment.yml && \
     mamba clean -y --all && \
     mamba env export -n "root" && \
     rm -rf ${HOME}/.renku/venv
-RUN R -e "install.packages(c('units', 'sf', 'skimr'), repos='https://cloud.r-project.org')"
+RUN R -e "install.packages(c('Rcpp', 'units', 'sf', 'skimr'), repos='https://cloud.r-project.org')"
 
 COPY startup.sh post-init.sh /usr/local/bin/
 COPY opendata /usr/local/bin/opendata
