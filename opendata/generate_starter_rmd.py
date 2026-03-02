@@ -6,7 +6,7 @@ import pandas as pd
 import re
 import sys
 
-from opendata import OpenDataZH
+from opendata import OpenDataZurich
 import os
 
 MODULE_PATH = os.path.abspath(__file__)
@@ -249,7 +249,7 @@ def create_readme(table_data_filenames, geo_data_filenames):
 # CREATE CODE FILES ---------------------------------------------------------- #
 def main(dataset_id):
     # Get the dataset
-    odz = OpenDataZH()
+    odz = OpenDataZurich()
     package = odz.get_package(dataset_id)
     df = dataset_to_resource(pd.DataFrame([package.metadata]))
     df = clean_features(df)
