@@ -124,7 +124,7 @@ plot(df$geometry)
 
 ggplot2 plot
 ```{r}
-df |>
+df %>%
   ggplot() +
   geom_sf()
 ```
