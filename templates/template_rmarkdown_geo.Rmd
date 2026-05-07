@@ -28,6 +28,14 @@ library(tidyverse)
 library(xml2)
 ```
 
+```{r}
+# Identify requests from this notebook in OpenDataZurich access logs.
+# Set across all HTTP layers used below: base R / curl, GDAL (sf::st_read), and httr2.
+USER_AGENT <- "{{ USER_AGENT }}"
+options(HTTPUserAgent = USER_AGENT)
+Sys.setenv(GDAL_HTTP_USERAGENT = USER_AGENT)
+```
+
 # Load the data
 
 data link
@@ -53,8 +61,9 @@ get_wfs_layers <- function(url) {
   cat("Getting available layers from:", url_geoportal, "\n")
   
   # read xml from geoportal
-  resp <- request(url_geoportal) |> 
-    req_headers(service = "WFS", version = "1.1.0", request = "GetCapabilities") |> 
+  resp <- request(url_geoportal) |>
+    req_user_agent(USER_AGENT) |>
+    req_headers(service = "WFS", version = "1.1.0", request = "GetCapabilities") |>
     req_perform()
   
   content_as_xml <- resp_body_xml(resp)
