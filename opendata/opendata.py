@@ -198,7 +198,7 @@ def read_geojson_from_wfs(wfs, layer):
 
 # API
 class OpenDataZurich:
-    def __init__(self):
+    def __init__(self, user_agent=None):
         self.provider = PROVIDER
         self.provider_link = PROVIDER_LINK
         self.baselink_dataportal = BASELINK_DATAPORTAL
@@ -208,6 +208,10 @@ class OpenDataZurich:
         self.keys_dataset = KEYS_DATASET
         self.keys_distributions = KEYS_DISTRIBUTIONS
         self.reduced_featureset = REDUCED_FEATURESET
+
+        self.session = requests.Session()
+        if user_agent:
+            self.session.headers.update({"User-Agent": user_agent})
 
         self._full_package_list_df = None
         self._geo_package_list_df = None
@@ -232,7 +236,7 @@ class OpenDataZurich:
     def _get_package_list_page(self, limit=500, offset=0):
         """Get a page of packages from CKAN API"""
         url = f"{self.ckan_api_link}/current_package_list_with_resources?limit={limit}&offset={offset}"
-        res = requests.get(url)
+        res = self.session.get(url)
         data = json.loads(res.content)
         if data["result"] == []:
             print("0 packages retrieved.")
@@ -274,7 +278,7 @@ class OpenDataZurich:
             if id is not None
             else f"{self.ckan_api_link}/package_show?id={name}"
         )
-        res = requests.get(url)
+        res = self.session.get(url)
         data = json.loads(res.content)
         if not data["success"]:
             print(data.get("error", "No error message provided."))

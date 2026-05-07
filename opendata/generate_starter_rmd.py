@@ -19,6 +19,10 @@ MODULE_DIR = os.path.dirname(MODULE_PATH)
 PROVIDER = "OpenDataZurich"
 BASELINK_DATAPORTAL = "https://data.stadt-zuerich.ch/dataset/"
 
+# User-Agent strings so requests are traceable in the data portal logs.
+USER_AGENT_GENERATOR = "OpenDataZurich-Renku/1.0 (lang=python; +https://github.com/opendatazurich/opendatazurich_renku_r)"
+USER_AGENT_NOTEBOOK_R = "OpenDataZurich-Renku/1.0 (lang=r; +https://github.com/opendatazurich/opendatazurich_renku_r)"
+
 # Set local folders and file names.
 # Switch to relative path when running this file directly
 # TEMPLATE_FOLDER = "../templates/"
@@ -217,6 +221,8 @@ def create_rmarkdown(data, notebook_template):
         file_url = data.loc[idx, PREFIX_RESOURCE_COLS + "url"]
         rmd = rmd.replace("{{ FILE_URL }}", file_url)
 
+        rmd = rmd.replace("{{ USER_AGENT }}", USER_AGENT_NOTEBOOK_R)
+
         filename = (
             f"{data.loc[idx, 'name']}_{data.loc[idx, PREFIX_RESOURCE_COLS + 'id']}.Rmd"
         )
@@ -249,7 +255,7 @@ def create_readme(table_data_filenames, geo_data_filenames):
 # CREATE CODE FILES ---------------------------------------------------------- #
 def main(dataset_id):
     # Get the dataset
-    odz = OpenDataZurich()
+    odz = OpenDataZurich(user_agent=USER_AGENT_GENERATOR)
     package = odz.get_package(dataset_id)
     df = dataset_to_resource(pd.DataFrame([package.metadata]))
     df = clean_features(df)
