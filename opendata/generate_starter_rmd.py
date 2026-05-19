@@ -234,7 +234,7 @@ def create_rmarkdown(data, notebook_template):
     return filenames
 
 
-def create_rprofile(table_data_filenames, geo_data_filenames):
+def create_rprofile(table_data_filenames, geo_data_filenames, resource_id):
     """
     Write ~/.Rprofile so the default .Rmd auto-opens when RStudio starts.
     Uses $HOME instead of the project dir because in Renku RStudio starts
@@ -249,7 +249,6 @@ def create_rprofile(table_data_filenames, geo_data_filenames):
         print("No .Rmd files generated, skipping .Rprofile creation.")
         return
 
-    resource_id = os.environ.get("RESOURCE_ID", "")
     default_file = ""
     if resource_id and resource_id != "NONE":
         match = [f for f in all_filenames if resource_id in f]
@@ -299,7 +298,7 @@ def create_readme(table_data_filenames, geo_data_filenames):
 
 # %%
 # CREATE CODE FILES ---------------------------------------------------------- #
-def main(dataset_id):
+def main(dataset_id, resource_id):
     # Get the dataset
     odz = OpenDataZurich(user_agent=USER_AGENT_GENERATOR)
     package = odz.get_package(dataset_id)
@@ -314,7 +313,7 @@ def main(dataset_id):
         df[df["format_filter"] == "geo_data"], TEMPLATE_RMARKDOWN_GEO
     )
     create_readme(table_data_filenames, geo_data_filenames)
-    create_rprofile(table_data_filenames, geo_data_filenames)
+    create_rprofile(table_data_filenames, geo_data_filenames, resource_id)
 
 
 # %%
@@ -324,4 +323,4 @@ if __name__ == "__main__":
             "Error: please provide a dataset id to generate R Markdown starter templates for."
         )
         sys.exit(1)
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
