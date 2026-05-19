@@ -26,7 +26,7 @@ docker run -it --rm \
   -e PACKAGE_ID="politik_abstimmungen_seit1933" \
   -e RESOURCE_ID="3e87b102-f19c-47f4-ab50-a679b51cf77e" \
   opendatazurich_renku_r \
-  /bin/bash -c "cd work && bash /usr/local/bin/startup.sh"
+  /bin/bash -c "bash /usr/local/bin/startup.sh"
 ```
 
 Run container with geo data 
@@ -39,7 +39,7 @@ docker run -it --rm \
   -e NB_UID=1000 \
   -e NB_GID=1000 \
   -e PACKAGE_ID="geo_oeffentlich_zugaengliche_parkplaetze_dav" \
-  -e RESOURCE_ID="2ed0038f-974c-4cb8-b7fd-3cf5217e9d6d" \
+  -e RESOURCE_ID="9d4f3dfc-e998-4c23-ba4e-6dde97a4ee16" \
   opendatazurich_renku_r \
-  /bin/bash -c "cd work && bash /usr/local/bin/startup.sh"
+  /bin/bash -c "bash /usr/local/bin/startup.sh"
 ```

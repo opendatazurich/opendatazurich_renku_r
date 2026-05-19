@@ -14,6 +14,6 @@ if [ -z "${RESOURCE_ID}" ]; then
     RESOURCE_ID="NONE"
 fi
 
-python $SCRIPT_DIR/opendata/generate_starter_rmd.py "${PACKAGE_ID}"
+python $SCRIPT_DIR/opendata/generate_starter_rmd.py "${PACKAGE_ID}" "${RESOURCE_ID}"
 
 # cd "$OLD_DIR"
