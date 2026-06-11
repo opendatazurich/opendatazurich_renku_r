@@ -1,10 +1,1 @@
-beautifulsoup4==4.*
-geojson==3.*
-geopandas==1.*
-matplotlib==3.10.*
-missingno==0.5.*
-numpy==2.*
-owslib==0.33.*
 pandas==2.*
-pyarrow==19.*
-tqdm==4.*
