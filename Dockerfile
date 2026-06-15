@@ -22,8 +22,7 @@ USER ${NB_USER}
 COPY requirements.txt /tmp/
 RUN /opt/conda/bin/pip install -r /tmp/requirements.txt --no-cache-dir && \
     rm -rf ${HOME}/.renku/venv
-RUN R -e "install.packages(c('Rcpp', 'units', 'sf', 'skimr'), repos='https://cloud.r-project.org')" && \
-    rm -rf /tmp/Rtmp* /tmp/downloaded_packages
+RUN R -e "install.packages(c('Rcpp', 'units', 'sf', 'skimr'), repos='https://cloud.r-project.org')"
 
 COPY startup.sh post-init.sh /usr/local/bin/
 COPY opendata /usr/local/bin/opendata
