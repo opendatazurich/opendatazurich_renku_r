@@ -10,19 +10,17 @@ FROM renku/renkulab-r:4.3.1-0.25.0
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    libudunits2-dev \
-    libproj-dev \
-    libgdal-dev \
-    libgeos-dev
+        libudunits2-dev \
+        libproj-dev \
+        libgdal-dev \
+        libgeos-dev && \
+    rm -rf /var/lib/apt/lists/*
 RUN chown -R ${NB_USER} /home/${NB_USER}
 USER ${NB_USER}
 
 # install the python dependencies
-COPY requirements.txt environment.yml /tmp/
-RUN mamba env update -q -f /tmp/environment.yml && \
-    /opt/conda/bin/pip install -r /tmp/requirements.txt --no-cache-dir && \
-    mamba clean -y --all && \
-    mamba env export -n "root" && \
+COPY requirements.txt /tmp/
+RUN /opt/conda/bin/pip install -r /tmp/requirements.txt --no-cache-dir && \
     rm -rf ${HOME}/.renku/venv
 RUN R -e "install.packages(c('Rcpp', 'units', 'sf', 'skimr'), repos='https://cloud.r-project.org')"
 
