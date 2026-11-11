@@ -206,9 +206,12 @@ def create_rmarkdown(data, notebook_template):
         description = re.sub("\\\\", "|", description)
         rmd = rmd.replace("{{ DATASET_DESCRIPTION }}", description)
 
-        ssz_comments = str(data.loc[idx, "sszBemerkungen"])
-        ssz_comments = re.sub('"', "'", ssz_comments)
-        ssz_comments = re.sub("\\\\", "|", ssz_comments)
+        bemerkungen = data.loc[idx].get("sszBemerkungen", "")
+        if not pd.isna(bemerkungen) and bemerkungen:
+            ssz_comments = re.sub('"', "'", str(bemerkungen))
+            ssz_comments = re.sub("\\\\", "|", ssz_comments)
+        else:
+            ssz_comments = ""
         rmd = rmd.replace("{{ SSZ_COMMENTS }}", ssz_comments)
 
         rmd = rmd.replace("{{ DATASET_METADATA }}", data.loc[idx, "metadata"])
